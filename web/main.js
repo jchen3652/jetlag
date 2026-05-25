@@ -656,3 +656,53 @@ loadData().catch(err => {
   console.error(err);
   document.getElementById('sidebar').innerHTML += `<p style="color:#f87171">Failed to load data. Run the export script first.</p>`;
 });
+
+/* ========================================
+   Mobile menu (hamburger)
+   ======================================== */
+function initMobileMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const closeBtn = document.getElementById('mobile-menu-close');
+
+  if (!toggle || !sidebar) return;
+
+  const openMenu = () => sidebar.classList.add('open');
+  const closeMenu = () => sidebar.classList.remove('open');
+
+  toggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeMenu);
+  }
+
+  // Close when clicking on the map (on mobile)
+  const mapEl = document.getElementById('map');
+  if (mapEl) {
+    mapEl.addEventListener('click', () => {
+      if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+        closeMenu();
+      }
+    });
+  }
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+      closeMenu();
+    }
+  });
+}
+
+// Initialize after DOM is ready (in case)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileMenu);
+} else {
+  initMobileMenu();
+}
