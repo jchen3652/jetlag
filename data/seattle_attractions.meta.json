@@ -1,0 +1,32 @@
+{
+  "count": 949,
+  "categories": {
+    "Parks": 816,
+    "Libraries": 62,
+    "Cinemas": 21,
+    "Golf Courses": 16,
+    "Hospitals": 15,
+    "Museums": 10,
+    "Foreign Consulates": 7,
+    "Aquariums": 1,
+    "Zoos": 1
+  },
+  "scope_cities": [
+    "Seattle, Washington, USA",
+    "Bellevue, Washington, USA",
+    "Redmond, Washington, USA",
+    "Mercer Island, Washington, USA"
+  ],
+  "crs": "EPSG:4326",
+  "fetched_at": "2026-05-25T09:42:52.602204+00:00",
+  "source": "OpenStreetMap (Overpass API) — modeled on taibeled/JetLagHideAndSeek",
+  "columns": [
+    "osm_type",
+    "osm_id",
+    "name",
+    "category",
+    "lat",
+    "lon",
+    "geometry"
+  ]
+}

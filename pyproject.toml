@@ -1,0 +1,29 @@
+[project]
+name = "jetlag"
+version = "0.1.0"
+description = "Optimal early-game strategy notebook for Jet Lag: The Game - Hide & Seek (Seattle edition)"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "folium>=0.18.0",
+    "geopandas>=0.13.2",
+    "fiona>=1.8.21,<1.10",  # Avoid Fiona 1.10+ which removed fiona.path and breaks older geopandas
+    "pyogrio>=0.7.0",       # Preferred modern engine when available (used explicitly below)
+    "ipyleaflet>=0.20.0",
+    "ipywidgets>=8.1.8",
+    "jupyterlab>=4.3.8",
+    "numpy>=1.24.4",
+    "osmnx>=1.9.4",
+    "pandas>=2.0.3",
+    "requests>=2.32.4",
+    "shapely>=2.0.7",
+    "tqdm>=4.67.3",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["jetlag*"]

@@ -1,0 +1,44 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data caches (GTFS zips are large)
+data/*.zip
+data/google_transit*
+data/*gtfs*
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+jupyterlab-workspaces/
+
+# Node / frontend
+node_modules/
+web/node_modules/
+dist/
+web/dist/
+
+# Large cached GTFS / transit data (keep only the final small artifacts)
+notebooks/data/
+data/google_transit/
+data/google_transit.zip
+data/*gtfs*
+notebooks/data/*gtfs*
+notebooks/data/google_transit*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
