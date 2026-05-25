@@ -29,11 +29,14 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Dedicated pane for non-interactive overlays (Voronoi, halos, etc.)
-// This prevents them from blocking clicks on underlying dots.
+// Dedicated pane for non-interactive overlays (Voronoi, halos, geometric circles).
+// We put it *below* the default overlayPane (z=400) so that transit stops and
+// attraction markers are always on top and remain clickable even when circles
+// are drawn near or over them.
 map.createPane('nonInteractiveOverlays');
 map.getPane('nonInteractiveOverlays').style.pointerEvents = 'none';
-map.getPane('nonInteractiveOverlays').style.zIndex = 400;   // above basemap, below most data
+map.getPane('nonInteractiveOverlays').style.zIndex = 350;   // below default data layers
+
 
 let stopsLayer = null;
 let routesLayer = null;
@@ -50,7 +53,7 @@ const voronoiPoints = {};           // attraction categories
 
 // Visual feedback for selections
 let selectedHighlightGroup = L.layerGroup();
-selectedHighlightGroup.addTo(map);
+selectedHighlightGroup.addTo(map);  // children explicitly use nonInteractiveOverlays pane
 
 // === Selection & Geometric Overlays ===
 let selectedFeatures = [];           // [{id, name, latlng, properties, source: 'stop'|'attraction'}]
