@@ -379,7 +379,7 @@ async function loadData() {
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = true;
+    checkbox.checked = false;
 
     checkbox.onchange = () => {
       if (checkbox.checked) layer.addTo(map);
@@ -408,7 +408,8 @@ async function loadData() {
 
     container.appendChild(label);
 
-    layer.addTo(map);
+    // Do not add by default — user wants attractions hidden on load
+    // layer.addTo(map);
   });
 
   // === Voronoi Diagrams UI (per category) ===
