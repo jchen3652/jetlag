@@ -241,11 +241,14 @@ function renderGeometricOverlaysList() {
 
 // Load all data
 async function loadData() {
+  // Use Vite's BASE_URL so it works both locally ("/") and on GitHub Pages ("/jetlag/")
+  const base = import.meta.env.BASE_URL || '/';
+
   const [attractionsData, stopsData, routesData, walkshedData] = await Promise.all([
-    fetch('/data/seattle_attractions.geojson').then(r => r.json()),
-    fetch('/data/transit_stops.geojson').then(r => r.json()),
-    fetch('/data/transit_routes.geojson').then(r => r.json()),
-    fetch('/data/transit_walkshed.geojson').then(r => r.json()),
+    fetch(`${base}data/seattle_attractions.geojson`).then(r => r.json()),
+    fetch(`${base}data/transit_stops.geojson`).then(r => r.json()),
+    fetch(`${base}data/transit_routes.geojson`).then(r => r.json()),
+    fetch(`${base}data/transit_walkshed.geojson`).then(r => r.json()),
   ]);
 
   // === Transit Layers ===
