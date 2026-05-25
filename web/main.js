@@ -105,6 +105,11 @@ function selectFeature(feature, latlng, source, name) {
   halo.options._selectionId = id;   // for easy removal later
   halo.addTo(selectedHighlightGroup);
 
+  // Force pointer-events none on the SVG path
+  if (halo._path) {
+    halo._path.style.pointerEvents = 'none';
+  }
+
   updateSelectedUI();
 }
 
@@ -191,6 +196,12 @@ function createGeometricCircle(centerInput, radiusMeters, label = '') {
     interactive: false,
     pane: 'nonInteractiveOverlays'
   }).addTo(map);
+
+  // Force pointer-events none on the actual SVG path so clicks pass through
+  // even if the circle visually overlaps stops
+  if (layer._path) {
+    layer._path.style.pointerEvents = 'none';
+  }
 
   const overlay = {
     id,
@@ -637,6 +648,11 @@ function showVoronoiForCategory(category, points, color) {
           pane: 'nonInteractiveOverlays'
         });
         group.addLayer(cell);
+
+        // Force pointer-events none on the SVG path
+        if (cell._path) {
+          cell._path.style.pointerEvents = 'none';
+        }
       }
     }
 
