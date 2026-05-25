@@ -294,7 +294,8 @@ async function loadData() {
   });
 
   routesLayer = L.geoJSON(routesData, {
-    style: { color: '#f59e0b', weight: 2.5, opacity: 0.75 }
+    style: { color: '#f59e0b', weight: 2.5, opacity: 0.75 },
+    interactive: false   // prevent thick lines from blocking clicks on stops
   });
 
   walkshedLayer = L.geoJSON(walkshedData, {
@@ -303,7 +304,8 @@ async function loadData() {
       weight: 1.5,
       fillColor: '#3b82f6',
       fillOpacity: 0.12
-    }
+    },
+    interactive: false   // prevent the shaded walkshed polygon from stealing clicks
   });
 
   // Add by default (matching the checkboxes)
