@@ -560,6 +560,60 @@ async function loadData() {
     };
   }
 
+  // New: "Use my current location" button
+  const useMyLocationBtn = document.getElementById('use-my-location');
+  const locationStatus = document.getElementById('location-status');
+
+  if (useMyLocationBtn && locationStatus) {
+    useMyLocationBtn.onclick = () => {
+      if (!navigator.geolocation) {
+        locationStatus.textContent = "Geolocation not supported by your browser.";
+        locationStatus.style.color = "#f87171";
+        return;
+      }
+
+      locationStatus.textContent = "Getting your location...";
+      locationStatus.style.color = "#9ca3af";
+      useMyLocationBtn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          document.getElementById('circle-lat').value = lat.toFixed(6);
+          document.getElementById('circle-lng').value = lng.toFixed(6);
+
+          locationStatus.textContent = `Location set! (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+          locationStatus.style.color = "#4ade80";
+          useMyLocationBtn.disabled = false;
+
+          // Clear the message after a few seconds
+          setTimeout(() => {
+            if (locationStatus.textContent.includes("Location set")) {
+              locationStatus.textContent = "";
+            }
+          }, 4000);
+        },
+        (error) => {
+          let msg = "Could not get location.";
+          if (error.code === error.PERMISSION_DENIED) msg = "Location permission denied.";
+          if (error.code === error.POSITION_UNAVAILABLE) msg = "Location information unavailable.";
+          if (error.code === error.TIMEOUT) msg = "Location request timed out.";
+
+          locationStatus.textContent = msg;
+          locationStatus.style.color = "#f87171";
+          useMyLocationBtn.disabled = false;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    };
+  }
+
   // Prominent "Clear All Overlays" button at the top of the section (no scrolling needed)
   const clearAllBtn = document.getElementById('clear-all-overlays');
   if (clearAllBtn) {
