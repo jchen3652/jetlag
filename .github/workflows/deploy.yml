@@ -39,6 +39,13 @@ jobs:
         env:
           GITHUB_PAGES: true   # Triggers the correct base path in vite.config.js
 
+      - name: Debug - List built files
+        run: |
+          echo "=== Contents of web/dist after build ==="
+          find web/dist -type f | sort
+          echo "=== Checking for data folder ==="
+          ls -la web/dist/data 2>&1 || echo "data folder MISSING in dist!"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
