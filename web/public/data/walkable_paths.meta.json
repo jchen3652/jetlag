@@ -1,0 +1,28 @@
+{
+  "n_features": 240934,
+  "size_mb": 51.103068,
+  "highway_counts": {
+    "footway": 150812,
+    "service": 47583,
+    "residential": 20979,
+    "secondary": 5232,
+    "steps": 4210,
+    "tertiary": 3928,
+    "path": 3088,
+    "primary": 2770,
+    "unclassified": 768,
+    "trunk": 439,
+    "pedestrian": 288,
+    "track": 157,
+    "secondary_link": 154,
+    "primary_link": 149,
+    "corridor": 91,
+    "bridleway": 88,
+    "tertiary_link": 83,
+    "living_street": 47,
+    "trunk_link": 46,
+    "busway": 22
+  },
+  "note": "All walk-relevant roads/paths; no per-type thinning",
+  "generated": "2026-07-25T08:57:20Z"
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jet Lag Seattle — Hiding Spot Finder</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+    <button id="mobile-menu-toggle" class="mobile-only" aria-label="Toggle menu">☰</button>
+
+    <div id="sidebar">
+      <h1>Hiding Spot Finder</h1>
+      <p class="subtitle">Seattle · hideable path surface</p>
+
+      <div class="section rules-chip">
+        <strong>Official radii</strong>
+        <ul>
+          <li>Zone S/M: <code>¼ mi</code> · L: <code>½ mi</code></li>
+          <li>Path rule: <code>10 ft</code> of marked path/road</li>
+          <li>OSM = centerlines (not road polygons)</li>
+        </ul>
+        <small>See RULES.md · lifack.ch</small>
+      </div>
+
+      <div class="section">
+        <h2>Game size</h2>
+        <div class="layer-control" id="game-size-control">
+          <label><input type="radio" name="game-size" value="small" /> Small · ¼ mi · 30 min</label>
+          <label><input type="radio" name="game-size" value="medium" checked /> Medium · ¼ mi · 60 min</label>
+          <label><input type="radio" name="game-size" value="large" /> Large · ½ mi · 180 min</label>
+        </div>
+        <p id="zone-radius-readout" class="readout">Zone radius: 0.25 mi</p>
+      </div>
+
+      <div class="section">
+        <h2>Path buffer (“close enough”)</h2>
+        <div class="layer-control">
+          <label>
+            <input type="radio" name="buffer-mode" value="practical" checked />
+            Practical · half-width + 10 ft
+          </label>
+          <label>
+            <input type="radio" name="buffer-mode" value="strict" />
+            Strict · 10 ft from centerline only
+          </label>
+        </div>
+        <p class="hint">
+          Strict matches the rule literally on OSM centerlines (undercounts sidewalks).
+          Practical adds a road-width estimate so roadside / sidewalk-ish spots count.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>Basemap</h2>
+        <div class="layer-control">
+          <label><input type="radio" name="basemap" value="light" checked /> Light</label>
+          <label><input type="radio" name="basemap" value="colorful" /> Colorful</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Layers</h2>
+        <div class="layer-control">
+          <label>
+            <input type="checkbox" id="toggle-stops" checked />
+            <span class="dot" style="background:#3b82f6"></span> Stations
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-routes" />
+            <span class="dot" style="background:#f59e0b"></span> Routes
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-paths" />
+            <span class="dot" style="background:#94a3b8"></span> Walkable paths (OSM)
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-start" checked />
+            <span class="dot" style="background:#ef4444"></span> Start (SAM)
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-parks" />
+            <span class="dot" style="background:#16a34a"></span> Parks
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-tentacle-pois" />
+            <span class="dot" style="background:#a855f7"></span> Tentacle POIs
+          </label>
+          <label>
+            <input type="checkbox" id="toggle-samples" checked />
+            <span class="dot" style="background:#22c55e"></span> Sample points
+          </label>
+        </div>
+        <div id="mode-filters" class="mode-filters"></div>
+      </div>
+
+      <div class="section">
+        <h2>Sample hideable surface</h2>
+        <p class="hint">
+          Drop random points in the zone; green = within path buffer, red = not.
+          Estimated hideable area = hit fraction × zone area.
+        </p>
+        <label class="inline-label">Samples
+          <input type="number" id="sample-n" value="20000" min="50" max="50000" step="1000" />
+        </label>
+        <button id="sample-selected">Sample selected station</button>
+        <button id="clear-samples">Clear samples</button>
+        <div id="sample-status" class="hint"></div>
+      </div>
+
+      <div class="section">
+        <h2>Inspect station</h2>
+        <p class="hint">Click a station → zone + auto-sample path proximity.</p>
+        <div id="station-detail">
+          <p class="empty">No station selected</p>
+        </div>
+        <button id="clear-zones" class="danger">Clear zones & samples</button>
+      </div>
+
+      <div class="section">
+        <h2>Radar presets</h2>
+        <div id="radar-buttons" class="chip-row"></div>
+        <button id="arm-radar-map-click">Arm: click map for radar</button>
+        <button id="clear-radars">Clear radars</button>
+      </div>
+
+      <div class="section">
+        <h2>All stations (hideable fraction)</h2>
+        <p class="hint" id="rank-hint">
+          Full list, best → worst. Score = path-adjacent fraction only.
+        </p>
+        <button id="recompute-scores">Refresh ranking</button>
+        <div id="scoreboard"></div>
+      </div>
+
+      <div class="info">
+        <small>Fork of the combined map · hideable surface = path-adjacent area inside the official zone circle.</small>
+      </div>
+
+      <button id="mobile-menu-close" class="mobile-only close-btn">Close</button>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>

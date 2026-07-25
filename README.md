@@ -34,6 +34,19 @@ uv run jupyter lab   # or just `jupyter lab` after activation
 
 All data is cached under `data/` after the first run.
 
+## Rules + Hiding Spot Map
+
+- **Distilled rules** (radii, zones, spots, questions): [`RULES.md`](./RULES.md) — from [lifack.ch](https://www.lifack.ch/docs/quick_start_guide/)
+- **Hiding Spot Finder** (fork of the web map with **official** ¼ / ½ mi zone radii):
+
+```bash
+cd web-hiding
+npm install
+npm run dev   # http://localhost:5174
+```
+
+- Combined transit + attractions map (general viz): `cd web && npm run dev`
+
 ## Key Reference Links (used inside the notebook)
 
 - Game rules & question types: https://www.lifack.ch/

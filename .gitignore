@@ -22,8 +22,14 @@ jupyterlab-workspaces/
 # Node / frontend
 node_modules/
 web/node_modules/
+web-hiding/node_modules/
 dist/
 web/dist/
+web-hiding/dist/
+
+# Large OSM / Overpass caches (regenerate via scripts)
+cache/
+*.parquet
 
 # Large cached GTFS / transit data (keep only the final small artifacts)
 notebooks/data/
