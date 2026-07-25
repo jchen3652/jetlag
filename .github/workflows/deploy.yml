@@ -27,24 +27,50 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: |
+            web/package-lock.json
+            web-hiding/package-lock.json
 
-      - name: Install dependencies
+      # --- Main map (web/) → https://jchen3652.github.io/jetlag/ ---
+      - name: Install web dependencies
         working-directory: web
         run: npm ci
 
-      - name: Build for GitHub Pages
+      - name: Build main map for GitHub Pages
         working-directory: web
         run: npm run build
         env:
-          GITHUB_PAGES: true   # Triggers the correct base path in vite.config.js
+          GITHUB_PAGES: true
 
-      - name: Debug - List built files
+      # --- Hiding finder (web-hiding/) → https://jchen3652.github.io/jetlag/hiding/ ---
+      - name: Prepare web-hiding public data
         run: |
-          echo "=== Contents of web/dist after build ==="
-          find web/dist -type f | sort
-          echo "=== Checking for data folder ==="
-          ls -la web/dist/data 2>&1 || echo "data folder MISSING in dist!"
+          # public/data is a local symlink and is not in git; copy data for the build
+          mkdir -p web-hiding/public
+          rm -rf web-hiding/public/data
+          cp -R web/public/data web-hiding/public/data
+          ls -la web-hiding/public/data | head
+
+      - name: Install web-hiding dependencies
+        working-directory: web-hiding
+        run: npm ci
+
+      - name: Build hiding map for GitHub Pages
+        working-directory: web-hiding
+        run: npm run build
+        env:
+          GITHUB_PAGES: true
+
+      - name: Merge hiding app into site as /hiding/
+        run: |
+          mkdir -p web/dist/hiding
+          cp -R web-hiding/dist/. web/dist/hiding/
+          echo "=== Final site tree (top) ==="
+          find web/dist -maxdepth 3 -type f | sort | head -80
+          echo "=== hiding/index.html present? ==="
+          test -f web/dist/hiding/index.html && echo yes || echo NO
+          echo "=== data in hiding? ==="
+          ls web/dist/hiding/data 2>&1 | head || ls web/dist/data 2>&1 | head
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
