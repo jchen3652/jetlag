@@ -169,6 +169,12 @@ function selectStop(stop) {
   } else {
     setSampleStatus('Path data not loaded yet — run scripts/export_walkable_paths.py');
   }
+  // On mobile, after picking from the list, close drawer so map + Menu FAB stay obvious
+  if (isMobileLayout() && document.getElementById('sidebar')?.classList.contains('open')) {
+    // keep open if user is still browsing list; only close when they sample/focus zone
+    // Closing helps them see the zone they selected
+    closeDrawer();
+  }
 }
 
 function drawZoneForStop(stop, { focus = false } = {}) {
@@ -247,6 +253,17 @@ function addRadar(center, miles, label) {
 function setSampleStatus(msg) {
   const el = document.getElementById('sample-status');
   if (el) el.textContent = msg || '';
+  // Mirror a short line onto the fixed mobile chip (never pans with the map)
+  const chip = document.getElementById('mobile-status-chip');
+  if (chip) {
+    if (!msg) {
+      chip.hidden = true;
+      chip.textContent = '';
+    } else {
+      chip.hidden = false;
+      chip.textContent = String(msg).split('·')[0].trim().slice(0, 90);
+    }
+  }
 }
 
 function runSampleForStop(stop) {
@@ -679,20 +696,121 @@ function buildRadarButtons() {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Mobile chrome — fixed FAB always reachable while panning the map
+// ---------------------------------------------------------------------------
+function isMobileLayout() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function setDrawerOpen(open) {
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const toggle = document.getElementById('mobile-menu-toggle');
+  if (!sidebar) return;
+
+  sidebar.classList.toggle('open', open);
+  document.body.classList.toggle('drawer-open', open);
+
+  if (backdrop) {
+    backdrop.hidden = !open;
+    backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+
+  // Block map interaction under the drawer on mobile
+  const mapEl = document.getElementById('map');
+  if (mapEl && isMobileLayout()) {
+    mapEl.style.pointerEvents = open ? 'none' : '';
+  }
+}
+
+function closeDrawer() {
+  setDrawerOpen(false);
+}
+
+function openDrawer() {
+  setDrawerOpen(true);
+}
+
 function initMobileMenu() {
   const sidebar = document.getElementById('sidebar');
   const toggle = document.getElementById('mobile-menu-toggle');
   const closeBtn = document.getElementById('mobile-menu-close');
+  const doneBtn = document.getElementById('mobile-menu-done');
+  const backdrop = document.getElementById('sidebar-backdrop');
   if (!toggle || !sidebar) return;
-  toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
-  closeBtn?.addEventListener('click', () => sidebar.classList.remove('open'));
+
+  toggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const open = !sidebar.classList.contains('open');
+    setDrawerOpen(open);
+  });
+
+  const closer = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    closeDrawer();
+  };
+  closeBtn?.addEventListener('click', closer);
+  doneBtn?.addEventListener('click', closer);
+  backdrop?.addEventListener('click', closer);
+
+  // Escape closes drawer
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) closeDrawer();
+  });
+
+  // After picking a station from the scoreboard on mobile, keep drawer open
+  // briefly is fine; user closes with Done. Don't auto-close on map pan.
+
+  // If user rotates to desktop, force drawer closed and restore map events
+  window.matchMedia('(max-width: 768px)').addEventListener('change', (ev) => {
+    if (!ev.matches) {
+      setDrawerOpen(false);
+      const mapEl = document.getElementById('map');
+      if (mapEl) mapEl.style.pointerEvents = '';
+    }
+  });
+
+  // Lighter default sample count on phones (still editable)
+  if (isMobileLayout()) {
+    const sn = document.getElementById('sample-n');
+    if (sn && Number(sn.value) > 3000) sn.value = '3000';
+  }
 }
 
 initMobileMenu();
-loadData().catch((err) => {
-  console.error(err);
-  document.getElementById('sidebar').insertAdjacentHTML(
-    'beforeend',
-    `<p style="color:#f87171">Failed to load data: ${err.message}</p>`
-  );
-});
+
+// Move Leaflet zoom control after map exists (called from loadData)
+function placeLeafletControlsForMobile() {
+  if (!isMobileLayout()) return;
+  try {
+    // Zoom already top-left by default; CSS moves it. Ensure attribution is compact.
+    map.attributionControl?.setPrefix?.(false);
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+loadData()
+  .then(() => {
+    placeLeafletControlsForMobile();
+    // Invalidate size after layout (mobile absolute map)
+    setTimeout(() => map.invalidateSize(), 100);
+    window.addEventListener('resize', () => {
+      map.invalidateSize();
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+    document.getElementById('sidebar').insertAdjacentHTML(
+      'beforeend',
+      `<p style="color:#f87171">Failed to load data: ${err.message}</p>`
+    );
+  });
+

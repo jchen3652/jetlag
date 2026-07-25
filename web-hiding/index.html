@@ -2,20 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>Jet Lag Seattle — Hiding Spot Finder</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div id="app">
-    <button id="mobile-menu-toggle" class="mobile-only" aria-label="Toggle menu">☰</button>
+    <!-- Fixed chrome: never moves with map pan/zoom -->
+    <div id="mobile-chrome" class="mobile-only" aria-hidden="false">
+      <button type="button" id="mobile-menu-toggle" class="mobile-fab" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+        <span class="fab-icon" aria-hidden="true">☰</span>
+        <span class="fab-label">Menu</span>
+      </button>
+      <div id="mobile-status-chip" class="mobile-status-chip" hidden></div>
+    </div>
+    <div id="sidebar-backdrop" class="mobile-only" hidden aria-hidden="true"></div>
 
-    <div id="sidebar">
-      <h1>Hiding Spot Finder</h1>
-      <p class="subtitle">Seattle · hideable path surface</p>
-      <p class="hint" style="margin-top:-8px">
-        <a href="../" style="color:#93c5fd">← Combined map</a>
+    <div id="sidebar" role="dialog" aria-modal="true" aria-label="Hiding tools">
+      <div class="sidebar-header sticky-header">
+        <div>
+          <h1>Hiding Spot Finder</h1>
+          <p class="subtitle">Seattle · hideable path surface</p>
+        </div>
+        <button type="button" id="mobile-menu-close" class="mobile-only icon-close" aria-label="Close menu">✕</button>
+      </div>
+      <p class="hint back-link">
+        <a href="../">← Combined map</a>
       </p>
 
       <div class="section rules-chip">
@@ -142,10 +157,12 @@
         <small>Fork of the combined map · hideable surface = path-adjacent area inside the official zone circle.</small>
       </div>
 
-      <button id="mobile-menu-close" class="mobile-only close-btn">Close</button>
+      <div class="mobile-only mobile-drawer-footer">
+        <button type="button" id="mobile-menu-done" class="primary-action">Done — back to map</button>
+      </div>
     </div>
 
-    <div id="map"></div>
+    <div id="map" role="application" aria-label="Seattle map"></div>
   </div>
 
   <script type="module" src="./main.js"></script>
